@@ -5,8 +5,16 @@ ob_start();
   include 'config.php';
   require_once 'vendor/autoload.php';
 
-  $sql = "SELECT * FROM funcionarios";
+  //Receber da URL o termo usado para pesquisar
+  $pesquisa = filter_input(INPUT_GET, 'pesquisa', FILTER_DEFAULT);
+  $nome = "%$pesquisa%";
+
+  $sql = "SELECT *
+                FROM funcionarios
+                WHERE NOME LIKE :nome
+                ORDER BY id ASC";
   $query = $pdo->prepare($sql);
+  $query->bindParam(':nome', $nome, PDO::PARAM_STR);
   $query->execute();
 
   use Dompdf\Dompdf;
